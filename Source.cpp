@@ -41,6 +41,12 @@ vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vecto
 
 	}
 
+	if (correctKeys.empty()) {
+
+		cout << "No results found." << endl;
+
+	}
+
 	return correctKeys;
 
 }
