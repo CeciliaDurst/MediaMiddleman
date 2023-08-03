@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include <fstream>
 using namespace std;
 
 class Content{
@@ -133,12 +135,64 @@ string Content::RunTimeMins_to_Hours_and_Mins(){
     }
  }
 
+ 
+unordered_map<string, Content*> ReadTitleBasics(string filename){
+    string line = "";
+    unordered_map<string, Content*> allContents;
+    fstream myfile(filename);
+    
+    if(myfile.is_open()){
+        getline(myfile,line);
+        // getline(myfile,line);
+        int index = 0;
+        vector<string> vals;
+        
+        // while(index != -1){
+        //     vals.push_back(line.substr(0,index));
+        //     line = line.substr(index+1);
+        //     index = line.find_first_of("\t");
+        // }
+
+        // for(int i = 0; i < vals.size(); i++){
+        //     cout << vals[i] << endl;
+        // }
+        while(getline(myfile,line)){
+            
+            index = line.find_first_of("\t");
+            while(index != -1){
+                vals.push_back(line.substr(0,index));
+                line = line.substr(index+1);
+                index = line.find_first_of("\t");
+            }
+            //only make Content object if the content is not adult
+            if(vals[4] == "0"){
+                Content* obj;
+                if(vals[6] == "\\N"){
+                    obj = new Content(vals[1], vals[2], stoi(vals[5]), 0, stoi(vals[7]));
+                }
+
+                else{
+                    obj = new Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
+                }
+                
+                obj->setGenres(vals[8]);
+                allContents [vals[0]] = obj; 
+
+            }
+            
+        }
+    }
+
+    else{
+        cout << "Title Basics File is Not Opening" << endl;
+    }
+
+    return allContents;
+
+}
 
 int main (){
-    string streamTest = "Horror,Adventure,Comedy";
-    Content* testContent = new Content("short", "Carmencita", 1894, 0, 1);
-    testContent->setGenres("Documentary,Short");
-    testContent->outputDetails();
+    ReadTitleBasics("../title_basics.tsv");
     
 }
 
