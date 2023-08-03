@@ -20,6 +20,7 @@ class Content{
         int getStartYear();
         int getEndYear();
         int getRunTimeMins();
+        vector<string> getGenres();
         string RunTimeMins_to_Hours_and_Mins();
         void outputDetails();
         
@@ -44,22 +45,40 @@ Content::Content(string f, string t, int sY, int eY, int rTM, vector<string> gen
 }
 
 void Content::setGenres(string genreStream){
-    int index = 0;
-    while(genreStream.size() != 0){
-        index = genreStream.find_first_of(',');
+    int index = genreStream.find_first_of(',');
+    //genres.push_back(genreStream);
 
+    while(index != -1){
+        genres.push_back(genreStream.substr(0,index));
+        genreStream = genreStream.substr(index+1);
+        index = genreStream.find_first_of(',');
     }
+
+    genres.push_back(genreStream);
+    
+}
+
+vector<string> Content::getGenres(){
+    return genres;
 }
 
 
 
-
-
 int main (){
-    string test = "Horror, Adventure, Comedy";
-    int index = test.find_first_not_of(',');
-    cout << test.substr(0,index) << endl;    
-    return 0;
+    string streamTest = "Horror,Adventure,Comedy";
+    Content testContent;
+    testContent.setGenres(streamTest);
+    for(int i = 0; i < testContent.getGenres().size(); i++){
+        cout << testContent.getGenres()[i] << endl;
+    }
+
+    vector<string> equalTest = {"Horror", "Adventure", "Comedy"};
+    bool guh;
+    for(int i = 0; i < testContent.getGenres().size(); i++){
+        guh = testContent.getGenres()[i] == equalTest[i];
+        cout << guh << endl;
+    }
+    
 }
 
 //HEY
