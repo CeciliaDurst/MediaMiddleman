@@ -105,7 +105,7 @@ int main(){
     auto start2 = std::chrono::high_resolution_clock::now();
     vector<int> tester2 = kSort(values, 5);
     auto stop2 = std::chrono::high_resolution_clock::now();
-    auto duration2 = duration_cast<std::chrono::microseconds>(stop2 - start2);
+    auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
 
     for(int i = 4; i > -1; i--){
         cout << tester2[i] << endl;
