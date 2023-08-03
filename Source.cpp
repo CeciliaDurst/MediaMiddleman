@@ -4,38 +4,77 @@
 #include <unordered_map>
 using namespace std;
 
+class Content {
+private:
+	string format;
+	string title;
+	int startYear;
+	int endYear;
+	int runTimeMins;
+	vector<string> genres;
+public:
+	Content();
+	Content(string f, string t, int sY, int eY, int rTM);
+	string getFormat();
+	string getTitle();
+	int getStartYear();
+	int getEndYear();
+	int getRunTimeMins();
+
+};
+
+Content::Content() {
+	format = "";
+	title = "";
+	startYear = 0;
+	endYear = 0;
+	runTimeMins = 0;
+	genres = {};
+}
+
+Content::Content(string f, string t, int sY, int eY, int rTM) {
+	format = f;
+	title = t;
+	startYear = sY;
+	endYear = eY;
+	runTimeMins = rTM;
+	genres = {};
+}
+
+string Content::getFormat() {
+	return format;
+}
+string Content::getTitle() {
+	return title;
+}
+int Content::getStartYear() {
+	return startYear;
+}
+int Content::getEndYear() {
+	return endYear;
+
+}
+
+int Content::getRunTimeMins() {
+	return runTimeMins;
+}
+
+
 // first input is unordered map containing <key, vector of information on the movie at this key (for testing im using 4 search requests Ex. format, title, release year, runtime
 // second input is a vector of user inputs
 // returns a list of keys that match the search requests
-vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vector<string> userInputs) {
+vector<string> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
-	vector<string> currList;
+	Content currList;
 	vector<string> correctKeys;
-	int count;
 
 	for (auto& i : allContent) { // i loops through every key of allContent
 
-		count = 0;
-		currList = i.second;
-		for (auto const& j : currList) { // j loops through the vector of the current key
+		currList = i.second;	
 
-			for (auto const& n : userInputs) { // n loops through every user search request
+		if ((currList.getFormat() == userInputs.getFormat() || userInputs.getFormat() == "None") && (currList.getTitle() == userInputs.getTitle() || userInputs.getTitle() == "None") && (currList.getStartYear() == userInputs.getStartYear() || userInputs.getStartYear() == -1) && (currList.getEndYear() == userInputs.getEndYear() || userInputs.getEndYear() == -1) && (currList.getRunTimeMins() == userInputs.getRunTimeMins() || userInputs.getRunTimeMins() == -1)) {
 
-				if (j != n || n == "None") { // incorrect search request
-
-					break;
-
-				}
-				else if (count == 3) { // making sure we checked every preference. For testing I used 4 preferences
-
-					correctKeys.push_back(i.first); // adding key to vector of correct keys
-					break;
-
-				}
-
-			}
-
-			count++;
+			correctKeys.push_back(i.first);
 
 		}
 
@@ -53,15 +92,21 @@ vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vecto
 
 int main() { // main for testing inputs and outputs
 
-	vector<string> userInputs = {"correct", "correct", "correct", "correct"};
-	unordered_map<string, vector<string>> allContent;
-	vector<string> tempList = {"correct", "correct", "correct", "correct"};
-	allContent["abcd"] = tempList;
-	tempList = {"wrong", "wrong", "wrong", "wrong"};
-	allContent["efgh"] = tempList;
-	allContent["hijk"] = tempList;
-	tempList = { "correct", "correct", "correct", "correct" };
-	allContent["lmno"] = tempList;
+	Content userInputs;
+	userInputs = Content("correct", "correct", 0, 0, 0);
+
+	Content content;
+	content = Content("correct", "correct", 0, 0, 0);
+	
+	unordered_map<string, Content> allContent;
+	allContent["abcd"] = content;
+
+	content = Content("wrong", "correct", 0, 0, 0);
+	allContent["efgh"] = content;
+	content = Content("correct", "wonrg", 0, 0, 0);
+	allContent["igjk"] = content;
+	content = Content("correct", "correct", 0, 0, 0);
+	allContent["lmno"] = content;	
 
 	vector<string> correctKeys = mapFilter(allContent, userInputs);
 
