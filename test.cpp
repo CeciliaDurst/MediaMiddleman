@@ -136,51 +136,104 @@ string Content::RunTimeMins_to_Hours_and_Mins(){
  }
 
  
-unordered_map<string, Content*> ReadTitleBasics(string filename){
+unordered_map<string, Content> ReadTitleBasics(string filename){
     string line = "";
-    unordered_map<string, Content*> allContents;
+    unordered_map<string, Content> allContents;
     fstream myfile(filename);
     
     if(myfile.is_open()){
         getline(myfile,line);
-        // getline(myfile,line);
-        int index = 0;
+        //getline(myfile,line);
+        int index = line.find_first_of("\t");
         vector<string> vals;
-        
+
         // while(index != -1){
         //     vals.push_back(line.substr(0,index));
         //     line = line.substr(index+1);
         //     index = line.find_first_of("\t");
         // }
 
+        // vals.push_back(line);
+
         // for(int i = 0; i < vals.size(); i++){
         //     cout << vals[i] << endl;
         // }
+
+        // cout << vals.size() << endl;
+        // int test = stoi(vals[8]);
+        // cout << test << endl;
         while(getline(myfile,line)){
             
-            index = line.find_first_of("\t");
+            int index = line.find_first_of("\t");
             while(index != -1){
-                vals.push_back(line.substr(0,index));
-                line = line.substr(index+1);
-                index = line.find_first_of("\t");
-            }
-            //only make Content object if the content is not adult
-            if(vals[4] == "0"){
-                Content* obj;
-                if(vals[6] == "\\N"){
-                    obj = new Content(vals[1], vals[2], stoi(vals[5]), 0, stoi(vals[7]));
+                if(line.substr(0,index) == "\\N"){
+                    vals.push_back("0");
                 }
 
                 else{
-                    obj = new Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
+                    vals.push_back(line.substr(0,index));
                 }
                 
-                obj->setGenres(vals[8]);
+                line = line.substr(index+1);
+                index = line.find_first_of("\t");
+            }
+            vals.push_back(line);
+            
+        
+            //only make Content object if the content is not adult
+            if(vals[4] == "0"){
+                Content obj;
+                
+                obj = Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
+
+                obj.setGenres(vals[8]);
                 allContents [vals[0]] = obj; 
 
+                
+
+                
+                
             }
+
+            vals.clear();
             
         }
+
+        // for(int i = 0; i < 2; i++){
+        //     getline(myfile,line);
+        //     int index = line.find_first_of("\t");
+        //     while(index != -1){
+        //         if(line.substr(0,index) == "\\N"){
+        //             vals.push_back("0");
+        //         }
+
+        //         else{
+        //             vals.push_back(line.substr(0,index));
+        //         }
+                
+        //         line = line.substr(index+1);
+        //         index = line.find_first_of("\t");
+        //     }
+        //     vals.push_back(line);
+            
+        
+        //     //only make Content object if the content is not adult
+        //     if(vals[4] == "0"){
+        //         Content obj;
+                
+        //         obj = Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
+
+        //         obj.setGenres(vals[8]);
+        //         allContents [vals[0]] = obj; 
+
+                
+
+                
+                
+        //     }
+
+        //     vals.clear();
+        // }
     }
 
     else{
@@ -192,7 +245,12 @@ unordered_map<string, Content*> ReadTitleBasics(string filename){
 }
 
 int main (){
-    ReadTitleBasics("../title_basics.tsv");
+    unordered_map<string, Content> test = ReadTitleBasics("title_basics2.tsv");
+    cout << test["tt0000002"].getTitle() << endl;
+    cout << test.size() << endl;
+    for(auto i : test){
+        cout << i.first << endl;
+    }
     
 }
 
