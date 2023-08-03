@@ -44,13 +44,17 @@ vector<int> mergeSort(vector <int> content, int start, int end) {
 
 // K Largest
 vector<int> kSort(vector<int> content, int k){
+    // Make a min priority queue to hold all given ints
     priority_queue<int, vector<int>, greater<int> > sorter;
     vector<int> endSort;
 
+    // Iterate through the given vector, filling the priority queue up to k elements
     for(int i = 0; i < k; i++){
         sorter.push(content[i]);
     }
 
+    // For the remaining elements, if an int is larger than the top of the queue,
+    // pop the smallest element from the priority queue and add that int
     for(int i = k; i < content.size(); i++){
         if(sorter.top() < content[i]){
             sorter.pop();
@@ -58,6 +62,7 @@ vector<int> kSort(vector<int> content, int k){
         }
     }
 
+    // Add priority queue elements to a vector and return it
     for(int i = 0; i < k; i++){
         endSort.push_back(sorter.top());
         sorter.pop();
@@ -66,7 +71,6 @@ vector<int> kSort(vector<int> content, int k){
     return endSort;
 }
 
-// Timer example (Taken from GeeksforGeeks https://www.geeksforgeeks.org/measure-execution-time-function-cpp/)
 int main(){
 
     // Merge test
@@ -81,6 +85,8 @@ int main(){
     values.push_back(300);
     values.push_back(20);
 
+    // (Chrono clock objects and manipulation sourced from GeeksforGeeks 
+    // https://www.geeksforgeeks.org/measure-execution-time-function-cpp/)
 
     // Get start and end timepoints and then subtract them to find duration of functions
     auto start1 = std::chrono::high_resolution_clock::now();
