@@ -19,7 +19,6 @@ vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vecto
 		currList = i.second;
 		for (auto const& j : currList) { // j loops through the vector of the current key
 
-			count++;
 			for (auto const& n : userInputs) { // n loops through every user search request
 
 				if (j != n || n == "None") { // incorrect search request
@@ -27,14 +26,16 @@ vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vecto
 					break;
 
 				}
-				else if (count == 4) { // making sure we checked every preference. For testing I used 4 preferences
+				else if (count == 3) { // making sure we checked every preference. For testing I used 4 preferences
 
 					correctKeys.push_back(i.first); // adding key to vector of correct keys
 					break;
 
 				}
 
-			}		
+			}
+
+			count++;
 
 		}
 
