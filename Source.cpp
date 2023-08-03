@@ -22,7 +22,7 @@ vector<string> mapFilter(unordered_map<string, vector<string>> allContent, vecto
 			count++;
 			for (auto const& n : userInputs) { // n loops through every user search request
 
-				if (j != n) { // incorrect search request
+				if (j != n || n == "None") { // incorrect search request
 
 					break;
 
