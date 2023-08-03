@@ -53,7 +53,9 @@ int main() { // main for testing inputs and outputs
 	allContent["abcd"] = tempList;
 	tempList = {"wrong", "wrong", "wrong", "wrong"};
 	allContent["efgh"] = tempList;
-	allContent["hijk"] = tempList;	
+	allContent["hijk"] = tempList;
+	tempList = { "correct", "correct", "correct", "correct" };
+	allContent["lmno"] = tempList;
 
 	vector<string> correctKeys = mapFilter(allContent, userInputs);
 
