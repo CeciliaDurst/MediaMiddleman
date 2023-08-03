@@ -60,8 +60,8 @@ int Content::getRunTimeMins() {
 }
 
 
-// first input is unordered map containing <key, vector of information on the movie at this key (for testing im using 4 search requests Ex. format, title, release year, runtime
-// second input is a vector of user inputs
+// first input is unordered map containing <key, Content list of information on the movie at this key (for testing im using 4 search requests Ex. format, title, release year, runtime
+// second input is a Content list of user inputs
 // returns a list of keys that match the search requests
 vector<string> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
@@ -71,7 +71,8 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 	for (auto& i : allContent) { // i loops through every key of allContent
 
 		currList = i.second;	
-
+		
+		// checking if it matches user inputs
 		if ((currList.getFormat() == userInputs.getFormat() || userInputs.getFormat() == "None") && (currList.getTitle() == userInputs.getTitle() || userInputs.getTitle() == "None") && (currList.getStartYear() == userInputs.getStartYear() || userInputs.getStartYear() == -1) && (currList.getEndYear() == userInputs.getEndYear() || userInputs.getEndYear() == -1) && (currList.getRunTimeMins() == userInputs.getRunTimeMins() || userInputs.getRunTimeMins() == -1)) {
 
 			correctKeys.push_back(i.first);
@@ -80,7 +81,7 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 
 	}
 
-	if (correctKeys.empty()) {
+	if (correctKeys.empty()) { // case no search results found
 
 		cout << "No results found." << endl;
 
