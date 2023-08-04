@@ -278,63 +278,63 @@ void setRatings(string filename, unordered_map<string, Content>& allContents){
 // returns a list of keys that match the search requests
 vector<string> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
-	int temp = 0;
-	Content currList;
-	vector<string> correctKeys, currGenre, currInput = userInputs.getGenres();
+    int temp = 0;
+    Content currList;
+    vector<string> correctKeys, currGenre, currInput = userInputs.getGenres();
 
-	for (auto& i : allContent) { // i loops through every key of allContent
+    for (auto& i : allContent) { // i loops through every key of allContent
 
-		currList = i.second; // looking at Content at this key
-		currGenre = currList.getGenres(); // geting the vector of Genres for this key
+        currList = i.second; // looking at Content at this key
+        currGenre = currList.getGenres(); // geting the vector of Genres for this key
 
-		// checking if the movie matches user inputs or is null
-		if ((currList.getFormat() == userInputs.getFormat() || userInputs.getFormat() == "None") && (currList.getTitle() == userInputs.getTitle() || userInputs.getTitle() == "None") && (currList.getStartYear() == userInputs.getStartYear() || userInputs.getStartYear() == -1) && (currList.getEndYear() == userInputs.getEndYear() || userInputs.getEndYear() == -1) && (currList.getRunTimeMins() == userInputs.getRunTimeMins() || userInputs.getRunTimeMins() == -1)) {
+        // checking if the movie matches user inputs or is null
+        if ((currList.getFormat() == userInputs.getFormat() || userInputs.getFormat() == "None") && (currList.getTitle() == userInputs.getTitle() || userInputs.getTitle() == "None") && (currList.getStartYear() == userInputs.getStartYear() || userInputs.getStartYear() == -1) && (currList.getEndYear() == userInputs.getEndYear() || userInputs.getEndYear() == -1) && (currList.getRunTimeMins() == userInputs.getRunTimeMins() || userInputs.getRunTimeMins() == -1)) {
 
-			if (currInput[0] == "None") { // null
+            if (currInput[0] == "None") { // null
 
-				correctKeys.push_back(i.first); // inserting key into the output list
+                correctKeys.push_back(i.first); // inserting key into the output list
 
-			}			
-			else {
+            }
+            else {
 
-				for (int j = 0; j < currGenre.size(); j++) {  // looping through genres of this movie
+                for (int j = 0; j < currGenre.size(); j++) {  // looping through genres of this movie
 
-					temp = 0;
+                    temp = 0;
 
-					for (int k = 0; k < currInput.size(); k++) { // looping through genres of the search request
+                    for (int k = 0; k < currInput.size(); k++) { // looping through genres of the search request
 
-						temp = k;
-						
-						if (currGenre[j] == currInput[k]) { // breaking if one matches
+                        temp = k;
 
-							correctKeys.push_back(i.first); // inserting key into the output list
-							break;
+                        if (currGenre[j] == currInput[k]) { // breaking if one matches
 
-						}				
+                            correctKeys.push_back(i.first); // inserting key into the output list
+                            break;
 
-					}
+                        }
 
-					if (currGenre[j] == currInput[temp]) { // breaking if one matches
+                    }
 
-						break;
+                    if (currGenre[j] == currInput[temp]) { // breaking if one matches
 
-					}
+                        break;
 
-				}
+                    }
 
-			}
+                }
 
-		}
+            }
 
-	}
+        }
 
-	if (correctKeys.empty()) { // case no search results found
+    }
 
-		cout << "No results found." << endl;
+    if (correctKeys.empty()) { // case no search results found
 
-	}
+        cout << "\nNo results found\nSearch Again" << endl;
 
-	return correctKeys; // return list of keys that match the search results
+    }
+
+    return correctKeys; // return list of keys that match the search results
 
 }
 
@@ -416,68 +416,73 @@ void testMap(){
 
 
 void testFilter(){
-string format, title, strStartYear, strEndYear, strRuntime;
+string format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0;
     vector<string> genres = {};
+    vector<string> correctKeys = {};
 
     // asking user for inputs
 	cout << "The MediaMiddleMan\n-------------------------------------\nSelect your preferences or type None" <<endl;
 
-    cout << "Format: ";
-    cin >> format;
+    while (correctKeys.empty()) {
 
-	cout << "Title: ";
-	cin >> title;
+        cout << "\nFormat: ";
+        cin >> format;
 
-    cout << "Release Year: ";
-    cin >> strStartYear;
+        cout << "Title: ";
+        cin >> title;
 
-    if (strStartYear == "None") { // switching to int
+        cout << "Release Year: ";
+        cin >> strStartYear;
 
-        startYear == -1;
+        if (strStartYear == "None") { // switching to int
 
-    }
-    else {
+            startYear == -1;
 
-        startYear = stoi(strStartYear);
+        }
+        else {
 
-    }
+            startYear = stoi(strStartYear);
 
-    cout << "End Year of Series: ";
-    cin >> strEndYear;
+        }
 
-    if (strEndYear == "None") { // switching to int
+        cout << "End Year of Series: ";
+        cin >> strEndYear;
 
-        endYear == -1;
+        if (strEndYear == "None") { // switching to int
 
-    }
-    else {
+            endYear == -1;
 
-        endYear = stoi(strEndYear);
+        }
+        else {
 
-    }
+            endYear = stoi(strEndYear);
 
-    cout << "Run Time in Minutes: ";
-    cin >> strRuntime;
+        }
 
-    if (strRuntime == "None") { // switching to int
+        cout << "Run Time in Minutes: ";
+        cin >> strRuntime;
 
-        runtime == -1;
+        if (strRuntime == "None") { // switching to int
 
-    }
-    else {
+            runtime == -1;
 
-        runtime = stoi(strRuntime);
+        }
+        else {
 
-    }
+            runtime = stoi(strRuntime);
 
-    // cout << "Genre(s) with commas in between: ";
-    // cin >> strGenre;
+        }
 
-    // setting user inputs in a Content List
-    Content userInputs;
-	userInputs = Content(format, title, startYear, endYear, runtime);
+        cout << "Genre(s) with commas in between: ";
+        cin >> strGenre;
 
+        // setting user inputs in a Content List
+        Content userInputs;
+        userInputs = Content(format, title, startYear, endYear, runtime);
+        userInputs.setGenres(strGenre);
+        // allContent comes from file
+        // correctKeys = mapFilter(allContent, userInputs);
     
 }
 
