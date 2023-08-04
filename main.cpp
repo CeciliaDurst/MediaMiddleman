@@ -16,6 +16,7 @@ class Content{
         int endYear;
         int runTimeMins;
         vector<string> genres;
+        float rating;
     public:
         Content();
         Content(string f, string t, int sY, int eY, int rTM);
@@ -28,9 +29,12 @@ class Content{
         vector<string> getGenres();
         string RunTimeMins_to_Hours_and_Mins();
         void outputDetails();
+        float getRating();
+        void setRating(float f);
         
 };
 
+//default constructor
 Content::Content(){
     format = "";
     title = "";
@@ -40,6 +44,7 @@ Content::Content(){
     genres = {};
 }
 
+//constructor that makes Content objects from the stream
 Content::Content(string f, string t, int sY, int eY, int rTM){
     format = f;
     title = t;
@@ -49,9 +54,12 @@ Content::Content(string f, string t, int sY, int eY, int rTM){
     genres = {};
 }
 
+//sets the genres of the piece of content
+//accepts a stream of genres in csv form from the tsv file
+//divides them and then adds them to the genre vector
+//genres are strings
 void Content::setGenres(string genreStream){
     int index = genreStream.find_first_of(',');
-    //genres.push_back(genreStream);
 
     while(index != -1){
         genres.push_back(genreStream.substr(0,index));
@@ -62,6 +70,7 @@ void Content::setGenres(string genreStream){
     genres.push_back(genreStream);
     
 }
+//getter methods
 string Content::getFormat(){
     return format;
 }
@@ -76,7 +85,7 @@ int Content::getEndYear(){
 
 }
 
-int Content::getRunTimeMins(){
+int Content::getRunTimeMins(){ 
     return runTimeMins;
 }
 
@@ -84,6 +93,10 @@ vector<string> Content::getGenres(){
     return genres;
 }
 
+//converts the minute runTime of a piece of content to a more conventional
+// hour + minute form
+//includes edge cases
+//returns a string so it can be outpuuted in the Content output function
 string Content::RunTimeMins_to_Hours_and_Mins(){
     string result = "";
     if(runTimeMins < 60){
@@ -121,7 +134,10 @@ string Content::RunTimeMins_to_Hours_and_Mins(){
 
 }
 
- void Content::outputDetails(){
+//outputs the details of apiece of Content
+//will probably be called to output the piece of Content
+// that matches the user's qualifications
+void Content::outputDetails(){
     cout << "\""<< title << "\" Information:" << endl;
     cout << "Format: " << format << endl;
     cout << "Release Year: " << startYear << endl;
@@ -138,37 +154,34 @@ string Content::RunTimeMins_to_Hours_and_Mins(){
     }
  }
 
- 
+float Content::getRating(){
+    return rating;
+}
+void Content::setRating(float f){
+    rating = f;
+}
+
+//reads in data from a tsv file and constructs/returns a map 
+// containing each piece of Content, with a unique identifier as the key
 unordered_map<string, Content> ReadTitleBasics(string filename){
     string line = "";
     unordered_map<string, Content> allContents;
     fstream myfile(filename);
     
+    //open file
     if(myfile.is_open()){
-        getline(myfile,line);
-        //getline(myfile,line);
-        int index = line.find_first_of("\t");
-        vector<string> vals;
+        getline(myfile,line); //read past first line
+        
+        //temporary vector to store each tab separated value as an element
+        vector<string> vals; 
 
-        // while(index != -1){
-        //     vals.push_back(line.substr(0,index));
-        //     line = line.substr(index+1);
-        //     index = line.find_first_of("\t");
-        // }
-
-        // vals.push_back(line);
-
-        // for(int i = 0; i < vals.size(); i++){
-        //     cout << vals[i] << endl;
-        // }
-
-        // cout << vals.size() << endl;
-        // int test = stoi(vals[8]);
-        // cout << test << endl;
+       //for each line
         while(getline(myfile,line)){
             
+            //read in each tab-sparated value into vals
             int index = line.find_first_of("\t");
             while(index != -1){
+                //if the value is null, store it as 0
                 if(line.substr(0,index) == "\\N"){
                     vals.push_back("0");
                 }
@@ -182,12 +195,22 @@ unordered_map<string, Content> ReadTitleBasics(string filename){
             }
             vals.push_back(line);
             
-        
+            /* Note ! Form of the vector is this: 
+                vals[0] == unique key
+                vals[1] == format
+                vals[2] == primaryTitle
+                vals[3] ==  originalTitle
+                vals[4] == isAdult
+                vals[5] == startYear
+                vals[6] == endYear
+                vals[7] == runtimeMinutes
+                vals[8] == csv stream of genres
+            */
             //only make Content object if the content is not adult
             if(vals[4] == "0"){
-                Content obj;
                 
-                obj = Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
+                
+                Content obj = Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
 
                 obj.setGenres(vals[8]);
                 allContents [vals[0]] = obj; 
@@ -202,41 +225,6 @@ unordered_map<string, Content> ReadTitleBasics(string filename){
             
         }
 
-        // for(int i = 0; i < 2; i++){
-        //     getline(myfile,line);
-        //     int index = line.find_first_of("\t");
-        //     while(index != -1){
-        //         if(line.substr(0,index) == "\\N"){
-        //             vals.push_back("0");
-        //         }
-
-        //         else{
-        //             vals.push_back(line.substr(0,index));
-        //         }
-                
-        //         line = line.substr(index+1);
-        //         index = line.find_first_of("\t");
-        //     }
-        //     vals.push_back(line);
-            
-        
-        //     //only make Content object if the content is not adult
-        //     if(vals[4] == "0"){
-        //         Content obj;
-                
-        //         obj = Content(vals[1], vals[2], stoi(vals[5]), stoi(vals[6]), stoi(vals[7]));
-
-        //         obj.setGenres(vals[8]);
-        //         allContents [vals[0]] = obj; 
-
-                
-
-                
-                
-        //     }
-
-        //     vals.clear();
-        // }
     }
 
     else{
@@ -245,6 +233,34 @@ unordered_map<string, Content> ReadTitleBasics(string filename){
 
     return allContents;
 
+}
+
+//opens the title_ratings file and assigns the respective ratings to the Content objects in the map
+//with the correct identifier
+void setRatings(string filename, unordered_map<string, Content>& allContents){
+    string line = "";
+    int index = 0;
+    string key = "";
+    float rating = 0.0f;
+    fstream myfile(filename);
+    getline(myfile, line);
+    while(getline(myfile, line)){
+        index = line.find_first_of("\t");
+        key = line.substr(0,index);
+        line = line.substr(index+1);
+        index = line.find_first_of("\t");
+        rating = stof(line.substr(0,index));
+
+        if(allContents.count(key) != 0 ){
+            allContents[key].setRating(rating);
+        }
+
+        else{
+            cout << "Cannot find " << key << " in the Contents Map" << endl;
+        }
+        
+
+    }
 }
 
 
@@ -349,9 +365,14 @@ vector<int> kSort(vector<int> content, int k){
 
     return endSort;
 }
+void testMap(){
+    unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
+    setRatings("title_ratings.tsv", allContents);
 
-int main () {
-
+    cout << allContents["tt0000001"].getTitle() << "'s Rating is: " << allContents["tt0000001"].getRating() << endl;
+    cout << allContents["tt0000035"].getTitle() << "'s Rating is: " << allContents["tt0000035"].getRating() << endl;
+}
+void testFiltering(){
     string format, title, strStartYear, strEndYear, strRuntime;
     int startYear = 0, endYear = 0, runtime = 0;
 
@@ -407,9 +428,17 @@ int main () {
 
     Content userInputs;
 	userInputs = Content(format, title, startYear, endYear, runtime);
-
-
-
+}
+void testSorts(){
+    vector<int> values;
+    values.push_back(2);
+    values.push_back(4);
+    values.push_back(3);
+    values.push_back(1);
+    values.push_back(10);
+    values.push_back(5);
+    values.push_back(300);
+    values.push_back(20);
     // Timers and outputs
     
     // (Chrono clock objects and manipulation sourced from GeeksforGeeks 
@@ -419,7 +448,7 @@ int main () {
     auto start1 = std::chrono::high_resolution_clock::now();
     vector<int> tester = mergeSort(values, 0, values.size());
     auto stop1 = std::chrono::high_resolution_clock::now();
-    auto duration1 = duration_cast<std::chrono::microseconds>(stop1 - start1);
+    auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
 
     for(int i = 0; i < 5; i++){
@@ -440,6 +469,15 @@ int main () {
 
     cout << "\nTime taken by Merge: " << duration1.count() << " microseconds" << endl;
     cout << "Time taken by K Largest: " << duration2.count() << " microseconds" << endl;
+}
+
+int main () {
+
+    
+    testMap();
+    // testFiltering();
+    // testSorts();
+
 
 
 

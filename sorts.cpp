@@ -92,7 +92,7 @@ int main(){
     auto start1 = std::chrono::high_resolution_clock::now();
     vector<int> tester = mergeSort(values, 0, values.size());
     auto stop1 = std::chrono::high_resolution_clock::now();
-    auto duration1 = duration_cast<std::chrono::microseconds>(stop1 - start1);
+    auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
 
     for(int i = 0; i < 5; i++){
