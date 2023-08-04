@@ -153,9 +153,9 @@ void Content::outputDetails(){
     }
     cout << "Run Time: " << RunTimeMins_to_Hours_and_Mins() << endl;
     cout << "Genres: ";
-    for(int i = 0; i < genres.size(); i++){
+    for(int i = 0; i < (int)genres.size(); i++){
         cout << genres[i];
-        if(i !=genres.size()-1){
+        if(i != (int)genres.size()-1){
             cout << ",";
         }
     }
@@ -304,11 +304,11 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 			}			
 			else {
 
-				for (int j = 0; j < currGenre.size(); j++) {  // looping through genres of this movie
+				for (int j = 0; j < (int)currGenre.size(); j++) {  // looping through genres of this movie
 
 					temp = 0;
 
-					for (int k = 0; k < currInput.size(); k++) { // looping through genres of the search request
+					for (int k = 0; k < (int)currInput.size(); k++) { // looping through genres of the search request
 
 						temp = k;
 						
