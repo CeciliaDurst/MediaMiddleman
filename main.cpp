@@ -490,12 +490,21 @@ string format, title, strStartYear, strEndYear, strRuntime;
 
 void testSorts(){
     // Map initialization
-    unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
-    setRatings("title_ratings.tsv", allContents);
+    unordered_map<string, Content> allContents = ReadTitleBasics("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_basics2.tsv");
+    setRatings("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_ratings.tsv", allContents);
 
     // Filter Map
-    Content filtering("short", "None", 1894, -1, -1);
-    vector<string> values = mapFilter(allContents, filtering);
+    // Content filtering("short", "None", 1894, -1, -1);
+    // vector<string> values = mapFilter(allContents, filtering);
+
+    vector<string> values;
+    values.push_back("tt0000001");
+    values.push_back("tt0000002");
+    values.push_back("tt0000003");
+    values.push_back("tt0000004");
+    values.push_back("tt0000005");
+    values.push_back("tt0000006");
+
 
     cout << "Successfully filtered!" << endl;
 
