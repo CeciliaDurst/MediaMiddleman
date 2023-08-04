@@ -250,22 +250,56 @@ unordered_map<string, Content> ReadTitleBasics(string filename){
 
 // Filtering
 
-// first input is unordered map containing <key, Content list of information on the movie at this key (for testing im using 4 search requests Ex. format, title, release year, runtime
+// first input is unordered map containing <key, Content list of information on the movie at this key>
 // second input is a Content list of user inputs
 // returns a list of keys that match the search requests
 vector<string> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
+	int temp = 0;
 	Content currList;
-	vector<string> correctKeys;
+	vector<string> correctKeys, currGenre, currInput = userInputs.getGenres();
 
 	for (auto& i : allContent) { // i loops through every key of allContent
 
-		currList = i.second;	
-		
-		// checking if it matches user inputs
+		currList = i.second; // looking at Content at this key
+		currGenre = currList.getGenres(); // geting the vector of Genres for this key
+
+		// checking if the movie matches user inputs or is null
 		if ((currList.getFormat() == userInputs.getFormat() || userInputs.getFormat() == "None") && (currList.getTitle() == userInputs.getTitle() || userInputs.getTitle() == "None") && (currList.getStartYear() == userInputs.getStartYear() || userInputs.getStartYear() == -1) && (currList.getEndYear() == userInputs.getEndYear() || userInputs.getEndYear() == -1) && (currList.getRunTimeMins() == userInputs.getRunTimeMins() || userInputs.getRunTimeMins() == -1)) {
 
-			correctKeys.push_back(i.first);
+			if (currInput[0] == "None") { // null
+
+				correctKeys.push_back(i.first); // inserting key into the output list
+
+			}			
+			else {
+
+				for (int j = 0; j < currGenre.size(); j++) {  // looping through genres of this movie
+
+					temp = 0;
+
+					for (int k = 0; k < currInput.size(); k++) { // looping through genres of the search request
+
+						temp = k;
+						
+						if (currGenre[j] == currInput[k]) { // breaking if one matches
+
+							correctKeys.push_back(i.first); // inserting key into the output list
+							break;
+
+						}				
+
+					}
+
+					if (currGenre[j] == currInput[temp]) { // breaking if one matches
+
+						break;
+
+					}
+
+				}
+
+			}
 
 		}
 
@@ -277,7 +311,7 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 
 	}
 
-	return correctKeys;
+	return correctKeys; // return list of keys that match the search results
 
 }
 
@@ -352,9 +386,11 @@ vector<int> kSort(vector<int> content, int k){
 
 int main () {
 
-    string format, title, strStartYear, strEndYear, strRuntime;
+   string format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0;
+    vector<string> genres = {};
 
+    // asking user for inputs
 	cout << "The MediaMiddleMan\n-------------------------------------\nSelect your preferences or type None" <<endl;
 
     cout << "Format: ";
@@ -366,7 +402,7 @@ int main () {
     cout << "Release Year: ";
     cin >> strStartYear;
 
-    if (strStartYear == "None") {
+    if (strStartYear == "None") { // switching to int
 
         startYear == -1;
 
@@ -380,7 +416,7 @@ int main () {
     cout << "End Year of Series: ";
     cin >> strEndYear;
 
-    if (strEndYear == "None") {
+    if (strEndYear == "None") { // switching to int
 
         endYear == -1;
 
@@ -394,7 +430,7 @@ int main () {
     cout << "Run Time in Minutes: ";
     cin >> strRuntime;
 
-    if (strRuntime == "None") {
+    if (strRuntime == "None") { // switching to int
 
         runtime == -1;
 
@@ -405,8 +441,14 @@ int main () {
 
     }
 
+    cout << "Genre(s) with commas in between: ";
+    cin >> strGenre;
+
+    // setting user inputs in a Content List
     Content userInputs;
 	userInputs = Content(format, title, startYear, endYear, runtime);
+    userInputs.setGenres(strGenre);
+
 
 
 
