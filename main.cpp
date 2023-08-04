@@ -243,24 +243,31 @@ void setRatings(string filename, unordered_map<string, Content>& allContents){
     string key = "";
     float rating = 0.0f;
     fstream myfile(filename);
-    getline(myfile, line);
-    while(getline(myfile, line)){
-        index = line.find_first_of("\t");
-        key = line.substr(0,index);
-        line = line.substr(index+1);
-        index = line.find_first_of("\t");
-        rating = stof(line.substr(0,index));
+    if(myfile.is_open()){
+        getline(myfile, line);
+        while(getline(myfile, line)){
+            index = line.find_first_of("\t");
+            key = line.substr(0,index);
+            line = line.substr(index+1);
+            index = line.find_first_of("\t");
+            rating = stof(line.substr(0,index));
 
-        if(allContents.count(key) != 0 ){
-            allContents[key].setRating(rating);
+            if(allContents.count(key) != 0 ){
+                allContents[key].setRating(rating);
+            }
+
+            else{
+                cout << "Cannot find " << key << " in the Contents Map" << endl;
+            }
+            
+
         }
-
-        else{
-            cout << "Cannot find " << key << " in the Contents Map" << endl;
-        }
-        
-
     }
+
+    else{
+        cout << "Ratings File is not open" << endl;
+    }
+    
 }
 
 
@@ -402,7 +409,12 @@ vector<int> kSort(vector<int> content, int k){
 void testMap(){
     unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
     setRatings("title_ratings.tsv", allContents);
+    cout << allContents["tt0000001"].getTitle() << "'s rating is " << allContents["tt0000001"].getRating() << endl;
+    cout << allContents["tt0000038"].getTitle() << "'s rating is " << allContents["tt0000038"].getRating() << endl;
+
 }
+
+
 void testFilter(){
 string format, title, strStartYear, strEndYear, strRuntime;
     int startYear = 0, endYear = 0, runtime = 0;
