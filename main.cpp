@@ -402,10 +402,9 @@ vector<int> kSort(vector<int> content, int k){
 void testMap(){
     unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
     setRatings("title_ratings.tsv", allContents);
-
-int main () {
-
-    string format, title, strStartYear, strEndYear, strRuntime;
+}
+void testFilter(){
+string format, title, strStartYear, strEndYear, strRuntime;
     int startYear = 0, endYear = 0, runtime = 0;
     vector<string> genres = {};
 
@@ -460,14 +459,28 @@ int main () {
 
     }
 
-    cout << "Genre(s) with commas in between: ";
-    cin >> strGenre;
+    // cout << "Genre(s) with commas in between: ";
+    // cin >> strGenre;
 
     // setting user inputs in a Content List
     Content userInputs;
 	userInputs = Content(format, title, startYear, endYear, runtime);
 
+    
+}
 
+void testSorts(){
+    // Merge test
+    cout << "Merge" << endl;
+    vector<int> values;
+    values.push_back(2);
+    values.push_back(4);
+    values.push_back(3);
+    values.push_back(1);
+    values.push_back(10);
+    values.push_back(5);
+    values.push_back(300);
+    values.push_back(20);
 
     // Timers and outputs
     
@@ -500,6 +513,8 @@ int main () {
     cout << "\nTime taken by Merge: " << duration1.count() << " microseconds" << endl;
     cout << "Time taken by K Largest: " << duration2.count() << " microseconds" << endl;
 }
+
+
 
 int main () {
 
