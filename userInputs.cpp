@@ -93,6 +93,8 @@ vector<string> Content::getGenres() {
     return genres;
 }
 
+// COPY AND PASTE TO MAIN
+
 // Filtering
 
 // first input is unordered map containing <key, Content list of information on the movie at this key>
@@ -227,6 +229,11 @@ int main () {
         Content userInputs;
         userInputs = Content(format, title, startYear, endYear, runtime);
         userInputs.setGenres(strGenre);
+        // allContent comes from file
+        // correctKeys = mapFilter(allContent, userInputs);
+
+        // END COPY AND PASTE TO MAIN
+
         unordered_map<string, Content> allContent;
         allContent["abcd"] = Content(format, title, startYear, endYear, runtime);
         correctKeys = mapFilter(allContent, userInputs);
