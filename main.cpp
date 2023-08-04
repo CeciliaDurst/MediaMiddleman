@@ -348,10 +348,10 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 // Sorting
 
 // Merge sort
-vector<string> mergeSort(unordered_map <string, Content> allContents, vector <string> content, int start, int end) {
+vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents, vector <pair<string,float>> content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
-    vector <string> endSort;
+    vector <pair<string,float>> endSort;
     for(int i = start; i < end; i++){
         endSort.push_back(content[i]);
     }
@@ -365,8 +365,8 @@ vector<string> mergeSort(unordered_map <string, Content> allContents, vector <st
     }
 
     // Recursively halve list
-    vector <string> firstHalf = mergeSort(allContents, content, start, midpoint);
-    vector <string> secondHalf = mergeSort(allContents, content, midpoint, end);
+    vector <pair<string,float>> firstHalf = mergeSort(allContents, content, start, midpoint);
+    vector <pair<string,float>> secondHalf = mergeSort(allContents, content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
@@ -374,7 +374,7 @@ vector<string> mergeSort(unordered_map <string, Content> allContents, vector <st
     int secondIndex = 0;
 
     while(firstIndex < (int)firstHalf.size() || secondIndex < (int)secondHalf.size()){
-        if(allContents[firstHalf[firstIndex]].getRating() > allContents[secondHalf[secondIndex]].getRating() || secondIndex >= (int)secondHalf.size()){
+        if(firstHalf[firstIndex].second > secondHalf[secondIndex].second || secondIndex >= (int)secondHalf.size()){
             endSort[index ++] = firstHalf[firstIndex ++];
         }
         else{
@@ -490,20 +490,21 @@ string format, title, strStartYear, strEndYear, strRuntime;
 
 void testSorts(){
     // Map initialization
-    unordered_map<string, Content> allContents = ReadTitleBasics("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_basics2.tsv");
-    setRatings("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_ratings.tsv", allContents);
+    unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
+    setRatings("title_ratings.tsv", allContents);
 
     // Filter Map
     // Content filtering("short", "None", 1894, -1, -1);
     // vector<string> values = mapFilter(allContents, filtering);
 
-    vector<string> values;
-    values.push_back("tt0000001");
-    values.push_back("tt0000002");
-    values.push_back("tt0000003");
-    values.push_back("tt0000004");
-    values.push_back("tt0000005");
-    values.push_back("tt0000006");
+    vector<pair<string,float>> values;
+    values.push_back(make_pair("tt0000001", allContents["tt0000001"].getRating()));
+    values.push_back(make_pair("tt0000002", allContents["tt0000002"].getRating()));
+    values.push_back(make_pair("tt0000003", allContents["tt0000003"].getRating()));
+    values.push_back(make_pair("tt0000004", allContents["tt0000004"].getRating()));
+    values.push_back(make_pair("tt0000005", allContents["tt0000005"].getRating()));
+
+    
 
 
     cout << "Successfully filtered!" << endl;
@@ -521,13 +522,13 @@ void testSorts(){
 
     // Get start and end timepoints and then subtract them to find duration of functions
     auto start1 = std::chrono::high_resolution_clock::now();
-    vector<string> tester = mergeSort(allContents, values, 0, values.size());
+    vector<pair<string,float>> tester = mergeSort(allContents, values, 0, values.size());
     auto stop1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
 
     for(int i = 0; i < 5; i++){
-        cout << tester[i] << endl;
+        cout << allContents[tester[i].first] .getRating()<< endl;
     }
 
     // // K Largest Test
