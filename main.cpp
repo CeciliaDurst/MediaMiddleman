@@ -31,7 +31,14 @@ class Content{
         void outputDetails();
         float getRating();
         void setRating(float f);
-        
+
+        //Comparator Class for rating sorting
+        struct greaterRating{
+            bool operator()(Content thing1, Content thing2){
+                // Returns true if thing1's rating is higher than thing2's
+                return thing1.getRating() > thing2.getRating();
+            }
+        };
 };
 
 //default constructor
@@ -41,7 +48,7 @@ Content::Content(){
     startYear = 0;
     endYear = 0;
     runTimeMins = 0;
-    genres = {};
+    //genres = {};
 }
 
 //constructor that makes Content objects from the stream
@@ -51,7 +58,7 @@ Content::Content(string f, string t, int sY, int eY, int rTM){
     startYear = sY;
     endYear = eY;
     runTimeMins = rTM;
-    genres = {};
+    //genres = {};
 }
 
 //sets the genres of the piece of content
@@ -341,10 +348,10 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 // Sorting
 
 // Merge sort
-vector<int> mergeSort(vector <int> content, int start, int end) {
+vector<string> mergeSort(unordered_map <string, Content> allContents, vector <string> content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
-    vector <int> endSort;
+    vector <string> endSort;
     for(int i = start; i < end; i++){
         endSort.push_back(content[i]);
     }
@@ -358,8 +365,8 @@ vector<int> mergeSort(vector <int> content, int start, int end) {
     }
 
     // Recursively halve list
-    vector <int> firstHalf = mergeSort(content, start, midpoint);
-    vector <int> secondHalf = mergeSort(content, midpoint, end);
+    vector <string> firstHalf = mergeSort(allContents, content, start, midpoint);
+    vector <string> secondHalf = mergeSort(allContents, content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
@@ -367,7 +374,7 @@ vector<int> mergeSort(vector <int> content, int start, int end) {
     int secondIndex = 0;
 
     while(firstIndex < (int)firstHalf.size() || secondIndex < (int)secondHalf.size()){
-        if(firstHalf[firstIndex] > secondHalf[secondIndex] || secondIndex >= (int)secondHalf.size()){
+        if(allContents[firstHalf[firstIndex]].getRating() > allContents[secondHalf[secondIndex]].getRating() || secondIndex >= (int)secondHalf.size()){
             endSort[index ++] = firstHalf[firstIndex ++];
         }
         else{
@@ -378,34 +385,34 @@ vector<int> mergeSort(vector <int> content, int start, int end) {
     return endSort;
 }
 
-// K Largest
-vector<int> kSort(vector<int> content, int k){
-    // Make a min priority queue to hold all given ints
-    priority_queue<int, vector<int>, greater<int> > sorter;
-    vector<int> endSort;
+// // K Largest
+// vector<Content> kSort(unordered_map<string, Content> allContents, vector <string> content, int k){
+//     // Make a min priority queue to hold all given content objects
+//     priority_queue<Content, vector<Content>, Content :: greaterRating> sorter;
+//     vector<Content> endSort;
 
-    // Iterate through the given vector, filling the priority queue up to k elements
-    for(int i = 0; i < k; i++){
-        sorter.push(content[i]);
-    }
+//     // Iterate through the given vector, filling the priority queue up to k elements
+//     for(int i = 0; i < k; i++){
+//         sorter.push(allContents[content[i]]);
+//     }
 
-    // For the remaining elements, if an int is larger than the top of the queue,
-    // pop the smallest element from the priority queue and add that int
-    for(int i = k; i < content.size(); i++){
-        if(sorter.top() < content[i]){
-            sorter.pop();
-            sorter.push(content[i]);
-        }
-    }
+//     // For the remaining elements, if a rating is larger than the top of the queue,
+//     // pop the smallest element from the priority queue and add that int
+//     for(int i = k; i < content.size(); i++){
+//         if(sorter.top().getRating() < allContents[content[i]].getRating()){
+//             sorter.pop();
+//             sorter.push(allContents[content[i]]);
+//         }
+//     }
 
-    // Add priority queue elements to a vector and return it
-    for(int i = 0; i < k; i++){
-        endSort.push_back(sorter.top());
-        sorter.pop();
-    }
+//     // Add priority queue elements to a vector and return it
+//     for(int i = 0; i < k; i++){
+//         endSort.push_back(sorter.top());
+//         sorter.pop();
+//     }
 
-    return endSort;
-}
+//     return endSort;
+// }
 void testMap(){
     unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
     setRatings("title_ratings.tsv", allContents);
@@ -418,7 +425,7 @@ void testMap(){
 void testFilter(){
 string format, title, strStartYear, strEndYear, strRuntime;
     int startYear = 0, endYear = 0, runtime = 0;
-    vector<string> genres = {};
+    //vector<string> genres = {};
 
     // asking user for inputs
 	cout << "The MediaMiddleMan\n-------------------------------------\nSelect your preferences or type None" <<endl;
@@ -482,17 +489,21 @@ string format, title, strStartYear, strEndYear, strRuntime;
 }
 
 void testSorts(){
+    // Map initialization
+    unordered_map<string, Content> allContents = ReadTitleBasics("title_basics2.tsv");
+    setRatings("title_ratings.tsv", allContents);
+
+    // Filter Map
+    Content filtering("short", "None", 1894, -1, -1);
+    vector<string> values = mapFilter(allContents, filtering);
+
+    cout << "Successfully filtered!" << endl;
+
+
+    // Sort Map
+
     // Merge test
     cout << "Merge" << endl;
-    vector<int> values;
-    values.push_back(2);
-    values.push_back(4);
-    values.push_back(3);
-    values.push_back(1);
-    values.push_back(10);
-    values.push_back(5);
-    values.push_back(300);
-    values.push_back(20);
 
     // Timers and outputs
     
@@ -501,7 +512,7 @@ void testSorts(){
 
     // Get start and end timepoints and then subtract them to find duration of functions
     auto start1 = std::chrono::high_resolution_clock::now();
-    vector<int> tester = mergeSort(values, 0, values.size());
+    vector<string> tester = mergeSort(allContents, values, 0, values.size());
     auto stop1 = std::chrono::high_resolution_clock::now();
     auto duration1 = std::chrono::duration_cast<std::chrono::microseconds>(stop1 - start1);
 
@@ -510,20 +521,20 @@ void testSorts(){
         cout << tester[i] << endl;
     }
 
-    // K Largest Test
-    cout << "\nK largest" << endl;
+    // // K Largest Test
+    // cout << "\nK largest" << endl;
 
-    auto start2 = std::chrono::high_resolution_clock::now();
-    vector<int> tester2 = kSort(values, 5);
-    auto stop2 = std::chrono::high_resolution_clock::now();
-    auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
+    // auto start2 = std::chrono::high_resolution_clock::now();
+    // vector<Content> tester2 = kSort(allContents, values, 5);
+    // auto stop2 = std::chrono::high_resolution_clock::now();
+    // auto duration2 = std::chrono::duration_cast<std::chrono::microseconds>(stop2 - start2);
 
-    for(int i = 4; i > -1; i--){
-        cout << tester2[i] << endl;
-    }
+    // // for(int i = 4; i > -1; i--){
+    // //     cout << tester2[i] << endl;
+    // // }
 
     cout << "\nTime taken by Merge: " << duration1.count() << " microseconds" << endl;
-    cout << "Time taken by K Largest: " << duration2.count() << " microseconds" << endl;
+    //cout << "Time taken by K Largest: " << duration2.count() << " microseconds" << endl;
 }
 
 
@@ -531,9 +542,9 @@ void testSorts(){
 int main () {
 
     
-    testMap();
+    // testMap();
     // testFiltering();
-    // testSorts();
+    testSorts();
 
 
 
