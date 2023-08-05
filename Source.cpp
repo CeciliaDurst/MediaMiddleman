@@ -367,13 +367,25 @@ vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents
     int firstIndex = 0;
     int secondIndex = 0;
 
-    while(firstIndex < (int)firstHalf.size() || secondIndex < (int)secondHalf.size()){
-        if(firstHalf[firstIndex].second > secondHalf[secondIndex].second || secondIndex >= (int)secondHalf.size()){
-            endSort[index ++] = firstHalf[firstIndex ++];
+    while (firstIndex < (int)firstHalf.size() && secondIndex < (int)secondHalf.size()) {
+        if (firstHalf[firstIndex].second > secondHalf[secondIndex].second) {
+            endSort[index++] = firstHalf[firstIndex++];
         }
-        else{
-            endSort[index ++] = secondHalf[secondIndex ++];
+        else {
+            endSort[index++] = secondHalf[secondIndex++];
         }
+    }
+
+    while (firstIndex < (int)firstHalf.size()) {
+
+        endSort[index++] = firstHalf[firstIndex++];
+
+    }
+
+    while (secondIndex < (int)secondHalf.size()) {
+
+        endSort[index++] = secondHalf[secondIndex++];
+
     }
 
     return endSort;
@@ -561,7 +573,7 @@ int main() { // user inputs and method calling
         for (int i = 0; i < sortedKeys.size(); i++) {
 
             temp = allContent[sortedKeys[i].first].getTitle();
-            cout << temp << endl;
+            cout << temp << " " << allContent[sortedKeys[i].first].getRating()<< endl;
 
         }
 
