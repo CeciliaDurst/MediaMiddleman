@@ -591,12 +591,24 @@ int main() { // user inputs and method calling
 
     if (sortType == "Merge") { // user wants merge sort
 
+        // (Chrono clock objects and manipulation sourced from GeeksforGeeks
+        // https://www.geeksforgeeks.org/measure-execution-time-function-cpp/)
+
+        // Get start and end timepoints and then subtract them to find duration of functions
+        auto start = std::chrono::high_resolution_clock::now();
         sortedKeys = mergeSort(allContent, correctKeys, 0, (int)correctKeys.size());
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "\nDuration of Merge sort algorithm: " << duration.count() << " microseconds" << endl;
 
     }
     else { // user wants k-largest sort
 
-       sortedKeys = kSort(allContent, correctKeys, 5);
+       auto start = std::chrono::high_resolution_clock::now();
+        sortedKeys = kSort(allContent, correctKeys, 5);
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        cout << "\nDuration of K-Largest sort algorithm: " << duration.count() << " microseconds" << endl;
 
     }
 
