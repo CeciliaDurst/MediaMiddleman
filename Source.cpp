@@ -397,13 +397,13 @@ vector<pair<string,float> > mergeSort(unordered_map <string, Content> allContent
 // Min Rating sets the logic for a priority queue of content titles and ratings
 struct minRating {
     constexpr bool operator()(
-        pair<string, int> const& a,
-        pair<string, int> const& b)
+        pair<string, float> const& a,
+        pair<string, float> const& b)
         const noexcept{
         return a.second > b.second;
     }
 };
-vector<pair<string, float> > kSort(unordered_map <string, Content> allContents, vector <pair<string,float> > content, int k){
+vector<pair<string, float> > kSort(vector <pair<string,float> > content, int k){
     // Make a min priority queue to hold all given ints
     priority_queue<pair<string, float>, vector<pair<string, float> >, minRating> sorter;
     vector<pair<string, float> > endSort;
@@ -605,7 +605,7 @@ int main() { // user inputs and method calling
     else { // user wants k-largest sort
 
        auto start = std::chrono::high_resolution_clock::now();
-        sortedKeys = kSort(allContent, correctKeys, 5);
+        sortedKeys = kSort(correctKeys, 5);
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = duration_cast<std::chrono::microseconds>(stop - start);
         cout << "\nDuration of K-Largest sort algorithm: " << duration.count() << " microseconds" << endl;
