@@ -35,7 +35,7 @@ public:
 
 };
 
-//default constructor
+// default constructor
 Content::Content() {
     format = "";
     title = "";
@@ -45,7 +45,7 @@ Content::Content() {
     //genres = {};
 }
 
-//constructor that makes Content objects from the stream
+// constructor that makes Content objects from the stream
 Content::Content(string f, string t, int sY, int eY, int rTM) {
     format = f;
     title = t;
@@ -55,10 +55,10 @@ Content::Content(string f, string t, int sY, int eY, int rTM) {
     //genres = {};
 }
 
-//sets the genres of the piece of content
-//accepts a stream of genres in csv form from the tsv file
-//divides them and then adds them to the genre vector
-//genres are strings
+// sets the genres of the piece of content
+// accepts a stream of genres in csv form from the tsv file
+// divides them and then adds them to the genre vector
+// genres are strings
 void Content::setGenres(string genreStream) {
     int index = genreStream.find_first_of(',');
 
@@ -71,7 +71,7 @@ void Content::setGenres(string genreStream) {
     genres.push_back(genreStream);
 
 }
-//getter methods
+// getter methods
 string Content::getFormat() {
     return format;
 }
@@ -94,10 +94,10 @@ vector<string> Content::getGenres() {
     return genres;
 }
 
-//converts the minute runTime of a piece of content to a more conventional
+// converts the minute runTime of a piece of content to a more conventional
 // hour + minute form
-//includes edge cases
-//returns a string so it can be outpuuted in the Content output function
+// includes edge cases
+// returns a string so it can be outpuuted in the Content output function
 string Content::RunTimeMins_to_Hours_and_Mins() {
     string result = "";
     if (runTimeMins < 60) {
@@ -135,8 +135,8 @@ string Content::RunTimeMins_to_Hours_and_Mins() {
 
 }
 
-//outputs the details of apiece of Content
-//will probably be called to output the piece of Content
+// outputs the details of apiece of Content
+// will probably be called to output the piece of Content
 // that matches the user's qualifications
 void Content::outputDetails() {
     cout << "\"" << title << "\" Information:" << endl;
@@ -162,27 +162,27 @@ void Content::setRating(float f) {
     rating = f;
 }
 
-//reads in data from a tsv file and constructs/returns a map 
+// reads in data from a tsv file and constructs/returns a map 
 // containing each piece of Content, with a unique identifier as the key
 unordered_map<string, Content> ReadTitleBasics(string filename) {
     string line = "";
     unordered_map<string, Content> allContents;
     fstream myfile(filename);
 
-    //open file
+    // open file
     if (myfile.is_open()) {
-        getline(myfile, line); //read past first line
+        getline(myfile, line); // read past first line
 
-        //temporary vector to store each tab separated value as an element
+        // temporary vector to store each tab separated value as an element
         vector<string> vals;
 
-        //for each line
+        // for each line
         while (getline(myfile, line)) {
 
-            //read in each tab-sparated value into vals
+            // read in each tab-sparated value into vals
             int index = line.find_first_of("\t");
             while (index != -1) {
-                //if the value is null, store it as 0
+                // if the value is null, store it as 0
                 if (line.substr(0, index) == "\\N") {
                     vals.push_back("0");
                 }
@@ -207,7 +207,7 @@ unordered_map<string, Content> ReadTitleBasics(string filename) {
                 vals[7] == runtimeMinutes
                 vals[8] == csv stream of genres
             */
-            //only make Content object if the content is not adult
+            // only make Content object if the content is not adult
             if (vals[4] == "0") {
 
 
@@ -236,8 +236,8 @@ unordered_map<string, Content> ReadTitleBasics(string filename) {
 
 }
 
-//opens the title_ratings file and assigns the respective ratings to the Content objects in the map
-//with the correct identifier
+// opens the title_ratings file and assigns the respective ratings to the Content objects in the map
+// with the correct identifier
 void setRatings(string filename, unordered_map<string, Content>& allContents) {
     string line = "";
     int index = 0;
@@ -277,11 +277,11 @@ void setRatings(string filename, unordered_map<string, Content>& allContents) {
 // first input is unordered map containing <key, Content list of information on the movie at this key>
 // second input is a Content list of user inputs
 // returns a list of keys that match the search requests
-vector<pair<string,float> > mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
+vector<pair<string, float> > mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
     int temp = 0;
     Content currList;
-    vector<pair<string,float> > correctKeys;
+    vector<pair<string, float> > correctKeys;
     vector<string> currGenre, currInput = userInputs.getGenres();
 
     for (auto& i : allContent) { // i loops through every key of allContent
@@ -294,7 +294,7 @@ vector<pair<string,float> > mapFilter(unordered_map<string, Content> allContent,
 
             if (currInput[0] == "None") { // null
 
-                correctKeys.push_back(make_pair(i.first,i.second.getRating())); // inserting key into the output list
+                correctKeys.push_back(make_pair(i.first, i.second.getRating())); // inserting key into the output list
 
             }
             else {
@@ -309,7 +309,7 @@ vector<pair<string,float> > mapFilter(unordered_map<string, Content> allContent,
 
                         if (currGenre[j] == currInput[k]) { // breaking if one matches
 
-                            correctKeys.push_back(make_pair(i.first,i.second.getRating())); // inserting key into the output list
+                            correctKeys.push_back(make_pair(i.first, i.second.getRating())); // inserting key into the output list
                             break;
 
                         }
@@ -343,11 +343,11 @@ vector<pair<string,float> > mapFilter(unordered_map<string, Content> allContent,
 // Sorting
 
 // Merge sort
-vector<pair<string,float> > mergeSort(unordered_map <string, Content> allContents, vector <pair<string,float> > content, int start, int end) {
+vector<pair<string, float> > mergeSort(unordered_map <string, Content> allContents, vector <pair<string, float> > content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
-    vector <pair<string,float> > endSort;
-    for(int i = start; i < end; i++){
+    vector <pair<string, float> > endSort;
+    for (int i = start; i < end; i++) {
         endSort.push_back(content[i]);
     }
 
@@ -355,13 +355,13 @@ vector<pair<string,float> > mergeSort(unordered_map <string, Content> allContent
     int midpoint = (end - start) / 2 + start;
 
     // If provided list is too small to be halved, return endSort
-    if(midpoint == 0 || endSort.size() == 1){
+    if (midpoint == 0 || endSort.size() == 1) {
         return endSort;
     }
 
     // Recursively halve list
-    vector <pair<string,float> > firstHalf = mergeSort(allContents, content, start, midpoint);
-    vector <pair<string,float> > secondHalf = mergeSort(allContents, content, midpoint, end);
+    vector <pair<string, float> > firstHalf = mergeSort(allContents, content, start, midpoint);
+    vector <pair<string, float> > secondHalf = mergeSort(allContents, content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
@@ -399,31 +399,31 @@ struct minRating {
     constexpr bool operator()(
         pair<string, float> const& a,
         pair<string, float> const& b)
-        const noexcept{
+        const noexcept {
         return a.second > b.second;
     }
 };
-vector<pair<string, float> > kSort(vector <pair<string,float> > content, int k){
+vector<pair<string, float> > kSort(vector <pair<string, float> > content, int k) {
     // Make a min priority queue to hold all given ints
     priority_queue<pair<string, float>, vector<pair<string, float> >, minRating> sorter;
     vector<pair<string, float> > endSort;
 
     // Iterate through the given vector, filling the priority queue up to k elements
-    for(int i = 0; i < k; i++){
+    for (int i = 0; i < k; i++) {
         sorter.push(make_pair(content[i].first, content[i].second));
     }
 
     // For the remaining elements, if an int is larger than the top of the queue,
     // pop the smallest element from the priority queue and add that int
-    for(int i = k; i < content.size(); i++){
-        if(sorter.top().second < content[i].second){
+    for (int i = k; i < content.size(); i++) {
+        if (sorter.top().second < content[i].second) {
             sorter.pop();
             sorter.push(make_pair(content[i].first, content[i].second));
         }
     }
 
     // Add priority queue elements to a vector and return it
-    for(int i = 0; i < k; i++){
+    for (int i = 0; i < k; i++) {
         endSort.push_back(make_pair(sorter.top().first, sorter.top().second));
         sorter.pop();
     }
@@ -438,10 +438,8 @@ int main() { // user inputs and method calling
 
     string sortType, format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0, isValid = 0;
-    // vector<string> genres = {};
     vector<string> genres;
-    // vector<pair<string,float>> correctKeys = {};
-    vector<pair<string,float> > correctKeys;
+    vector<pair<string, float> > correctKeys;
 
 
     // opening file
@@ -481,7 +479,7 @@ int main() { // user inputs and method calling
         getline(cin, title);
 
         cout << "Release Year: ";
-        getline(cin, strStartYear); 
+        getline(cin, strStartYear);
 
         while (true) {
 
@@ -491,7 +489,7 @@ int main() { // user inputs and method calling
                 break;
 
             }
-            else {            
+            else {
 
                 try {
 
@@ -511,7 +509,7 @@ int main() { // user inputs and method calling
         }
 
         cout << "End Year of Series: ";
-        cin >> strEndYear;  
+        cin >> strEndYear;
 
         while (true) {
 
@@ -521,7 +519,7 @@ int main() { // user inputs and method calling
                 break;
 
             }
-            else {            
+            else {
 
                 try {
 
@@ -531,17 +529,17 @@ int main() { // user inputs and method calling
                 }
                 catch (invalid_argument& e) { // case not an int
 
-                    cout << "Invalid: Please Input a Number or None\nEnd Year of Series : ";
+                    cout << "Invalid: Please Input a Number or None\nEnd Year of Series: ";
                     cin >> strEndYear;
 
                 }
 
             }
 
-        }        
+        }
 
         cout << "Run Time in Minutes or Number of Seasons: ";
-        cin >> strRuntime;     
+        cin >> strRuntime;
 
         while (true) {
 
@@ -551,7 +549,7 @@ int main() { // user inputs and method calling
                 break;
 
             }
-            else {            
+            else {
 
                 try {
 
@@ -579,14 +577,13 @@ int main() { // user inputs and method calling
         userInputs.setGenres(strGenre);
 
         // filtering keys based on search inputs
-        correctKeys = mapFilter(allContent, userInputs);        
+        correctKeys = mapFilter(allContent, userInputs);
 
     }
 
     // sorting
 
-    // vector<pair<string,float>> sortedKeys = {};
-    vector<pair<string,float> > sortedKeys;
+    vector<pair<string, float> > sortedKeys;
 
 
     if (sortType == "Merge") { // user wants merge sort
@@ -598,16 +595,16 @@ int main() { // user inputs and method calling
         auto start = std::chrono::high_resolution_clock::now();
         sortedKeys = mergeSort(allContent, correctKeys, 0, (int)correctKeys.size());
         auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "\nDuration of Merge sort algorithm: " << duration.count() << " microseconds" << endl;
 
     }
     else { // user wants k-largest sort
 
-       auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
         sortedKeys = kSort(correctKeys, 5);
         auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "\nDuration of K-Largest sort algorithm: " << duration.count() << " microseconds" << endl;
 
     }
@@ -615,14 +612,14 @@ int main() { // user inputs and method calling
     // Outputing Results
 
     cout << "\nTop Search Results" << endl;
-    string temp = "";   
+    string temp = "";
 
     if (sortedKeys.size() >= 5) { // Top Five Results 
 
         for (int i = 0; i < 5; i++) {
 
             temp = allContent[sortedKeys[i].first].getTitle();
-            cout << temp << " " << allContent[sortedKeys[i].first].getRating()<< endl;
+            cout << temp << " " << allContent[sortedKeys[i].first].getRating() << endl;
 
         }
 
@@ -632,7 +629,7 @@ int main() { // user inputs and method calling
         for (int i = 0; i < sortedKeys.size(); i++) {
 
             temp = allContent[sortedKeys[i].first].getTitle();
-            cout << temp << " " << allContent[sortedKeys[i].first].getRating()<< endl;
+            cout << temp << " " << allContent[sortedKeys[i].first].getRating() << endl;
 
         }
 
