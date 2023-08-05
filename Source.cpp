@@ -53,6 +53,7 @@ Content::Content(string f, string t, int sY, int eY, int rTM) {
     endYear = eY;
     runTimeMins = rTM;
     //genres = {};
+    rating = 0.0f;
 }
 
 // sets the genres of the piece of content
@@ -103,7 +104,7 @@ string Content::RunTimeMins_to_Hours_and_Mins() {
     if (runTimeMins < 60) {
 
         result += to_string(runTimeMins) + " minute";
-        if (runTimeMins > 1) {
+        if (runTimeMins > 1 || runTimeMins == 0) {
             result += "s";
         }
 
@@ -114,20 +115,20 @@ string Content::RunTimeMins_to_Hours_and_Mins() {
     int hours = runTimeMins / 60;
 
     if (mins == 0) {
-        result += to_string(hours) + "hour";
-        if (hours > 1) {
+        result += to_string(hours) + " hour";
+        if (hours > 1 || hours == 0) {
             result += "s";
         }
         return result;
     }
 
-    result += to_string(hours) + "hour";
-    if (hours > 1) {
+    result += to_string(hours) + " hour";
+    if (hours > 1 || hours == 0) {
         result += "s";
     }
 
-    result += " and " + to_string(mins) + "minute";
-    if (mins > 1) {
+    result += " and " + to_string(mins) + " minute";
+    if (mins > 1 || mins ==0) {
         result += "s";
     }
 
@@ -153,6 +154,8 @@ void Content::outputDetails() {
             cout << ",";
         }
     }
+
+    cout << "\nRating: " << rating  << "\n"<< endl;
 }
 
 float Content::getRating() {
@@ -165,6 +168,7 @@ void Content::setRating(float f) {
 // reads in data from a tsv file and constructs/returns a map 
 // containing each piece of Content, with a unique identifier as the key
 unordered_map<string, Content> ReadTitleBasics(string filename) {
+    cout << "reading basics file" << endl;
     string line = "";
     unordered_map<string, Content> allContents;
     fstream myfile(filename);
@@ -239,6 +243,8 @@ unordered_map<string, Content> ReadTitleBasics(string filename) {
 // opens the title_ratings file and assigns the respective ratings to the Content objects in the map
 // with the correct identifier
 void setRatings(string filename, unordered_map<string, Content>& allContents) {
+    cout << "reading ratings file" << endl;
+    
     string line = "";
     int index = 0;
     string key = "";
@@ -257,9 +263,9 @@ void setRatings(string filename, unordered_map<string, Content>& allContents) {
                 allContents[key].setRating(rating);
             }
 
-            else {
-                cout << "Cannot find " << key << " in the Contents Map" << endl;
-            }
+            // else {
+            //     cout << "Cannot find " << key << " in the Contents Map" << endl;
+            // }
 
 
         }
@@ -277,7 +283,7 @@ void setRatings(string filename, unordered_map<string, Content>& allContents) {
 // first input is unordered map containing <key, Content list of information on the movie at this key>
 // second input is a Content list of user inputs
 // returns a list of keys that match the search requests
-vector<pair<string, float> > mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
+vector<pair<string, float> > mapFilter(unordered_map<string, Content>& allContent, Content& userInputs) {
 
     int temp = 0;
     Content currList;
@@ -343,7 +349,7 @@ vector<pair<string, float> > mapFilter(unordered_map<string, Content> allContent
 // Sorting
 
 // Merge sort
-vector<pair<string, float> > mergeSort(vector <pair<string, float> > content, int start, int end) {
+vector<pair<string, float> > mergeSort(vector <pair<string, float> >& content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
     vector <pair<string, float> > endSort;
@@ -403,7 +409,7 @@ struct minRating {
         return a.second > b.second;
     }
 };
-vector<pair<string, float> > kSort(vector <pair<string, float> > content, int k) {
+vector<pair<string, float> > kSort(vector <pair<string, float> >& content, int k) {
     // Make a min priority queue to hold all given ints
     priority_queue<pair<string, float>, vector<pair<string, float> >, minRating> sorter;
     vector<pair<string, float> > endSort;
@@ -433,9 +439,7 @@ vector<pair<string, float> > kSort(vector <pair<string, float> > content, int k)
     return endSort;
 }
 
-
-int main() { // user inputs and method calling
-
+void userInputs(string title_basics, string title_ratings){
     string sortType, format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0, isValid = 0;
     vector<string> genres;
@@ -443,8 +447,8 @@ int main() { // user inputs and method calling
 
 
     // opening file
-    unordered_map<string, Content> allContent = ReadTitleBasics("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_basics2.tsv");
-    setRatings("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_ratings.tsv", allContent);
+    unordered_map<string, Content> allContent = ReadTitleBasics(title_basics);
+    setRatings(title_ratings, allContent);
 
     // asking user for inputs
     cout << "The MediaMiddleMan\n--------------------------------------------------------------------\nWould You like to use Merge Sort or K-Largest Sort? (Type as Shown): ";
@@ -612,14 +616,13 @@ int main() { // user inputs and method calling
     // Outputing Results
 
     cout << "\nTop Search Results" << endl;
-    string temp = "";
+    
 
     if (sortedKeys.size() >= 5) { // Top Five Results 
 
         for (int i = 0; i < 5; i++) {
 
-            temp = allContent[sortedKeys[i].first].getTitle();
-            cout << temp << " " << allContent[sortedKeys[i].first].getRating() << endl;
+            allContent[sortedKeys[i].first].outputDetails();
 
         }
 
@@ -628,11 +631,27 @@ int main() { // user inputs and method calling
 
         for (int i = 0; i < sortedKeys.size(); i++) {
 
-            temp = allContent[sortedKeys[i].first].getTitle();
-            cout << temp << " " << allContent[sortedKeys[i].first].getRating() << endl;
+            allContent[sortedKeys[i].first].outputDetails();
 
         }
 
     }
+}
+
+int main() { // user inputs and method calling
+    // unordered_map<string, Content> allContent = ReadTitleBasics("title_basics.tsv");
+    // allContent["tt0062361"].outputDetails();
+    // setRatings("title_ratings.tsv", allContent);
+
+    string title_basics = "";
+    string title_ratings = "";
+    //Tarik Filenames
+    title_basics = "title_basics.tsv";
+    title_ratings = "title_ratings";
+
+    //Cecilia filenames
+
+
+    userInputs(title_basics,title_ratings);
 
 }
