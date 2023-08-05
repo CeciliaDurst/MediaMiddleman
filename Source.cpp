@@ -343,7 +343,7 @@ vector<pair<string, float> > mapFilter(unordered_map<string, Content> allContent
 // Sorting
 
 // Merge sort
-vector<pair<string, float> > mergeSort(unordered_map <string, Content> allContents, vector <pair<string, float> > content, int start, int end) {
+vector<pair<string, float> > mergeSort(vector <pair<string, float> > content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
     vector <pair<string, float> > endSort;
@@ -360,8 +360,8 @@ vector<pair<string, float> > mergeSort(unordered_map <string, Content> allConten
     }
 
     // Recursively halve list
-    vector <pair<string, float> > firstHalf = mergeSort(allContents, content, start, midpoint);
-    vector <pair<string, float> > secondHalf = mergeSort(allContents, content, midpoint, end);
+    vector <pair<string, float> > firstHalf = mergeSort(content, start, midpoint);
+    vector <pair<string, float> > secondHalf = mergeSort(content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
@@ -593,7 +593,7 @@ int main() { // user inputs and method calling
 
         // Get start and end timepoints and then subtract them to find duration of functions
         auto start = std::chrono::high_resolution_clock::now();
-        sortedKeys = mergeSort(allContent, correctKeys, 0, (int)correctKeys.size());
+        sortedKeys = mergeSort(correctKeys, 0, (int)correctKeys.size());
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         cout << "\nDuration of Merge sort algorithm: " << duration.count() << " microseconds" << endl;
