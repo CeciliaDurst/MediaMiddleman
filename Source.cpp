@@ -5,6 +5,7 @@
 #include <fstream>
 #include <chrono>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 // Content class
@@ -41,7 +42,7 @@ Content::Content() {
     startYear = 0;
     endYear = 0;
     runTimeMins = 0;
-    genres = {};
+    //genres = {};
 }
 
 //constructor that makes Content objects from the stream
@@ -51,7 +52,7 @@ Content::Content(string f, string t, int sY, int eY, int rTM) {
     startYear = sY;
     endYear = eY;
     runTimeMins = rTM;
-    genres = {};
+    //genres = {};
 }
 
 //sets the genres of the piece of content
@@ -276,11 +277,11 @@ void setRatings(string filename, unordered_map<string, Content>& allContents) {
 // first input is unordered map containing <key, Content list of information on the movie at this key>
 // second input is a Content list of user inputs
 // returns a list of keys that match the search requests
-vector<pair<string,float>> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
+vector<pair<string,float> > mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
     int temp = 0;
     Content currList;
-    vector<pair<string,float>> correctKeys;
+    vector<pair<string,float> > correctKeys;
     vector<string> currGenre, currInput = userInputs.getGenres();
 
     for (auto& i : allContent) { // i loops through every key of allContent
@@ -342,10 +343,10 @@ vector<pair<string,float>> mapFilter(unordered_map<string, Content> allContent, 
 // Sorting
 
 // Merge sort
-vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents, vector <pair<string,float>> content, int start, int end) {
+vector<pair<string,float> > mergeSort(unordered_map <string, Content> allContents, vector <pair<string,float> > content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
-    vector <pair<string,float>> endSort;
+    vector <pair<string,float> > endSort;
     for(int i = start; i < end; i++){
         endSort.push_back(content[i]);
     }
@@ -359,8 +360,8 @@ vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents
     }
 
     // Recursively halve list
-    vector <pair<string,float>> firstHalf = mergeSort(allContents, content, start, midpoint);
-    vector <pair<string,float>> secondHalf = mergeSort(allContents, content, midpoint, end);
+    vector <pair<string,float> > firstHalf = mergeSort(allContents, content, start, midpoint);
+    vector <pair<string,float> > secondHalf = mergeSort(allContents, content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
@@ -391,17 +392,61 @@ vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents
     return endSort;
 }
 
+// K Largest
+
+// Min Rating sets the logic for a priority queue of content titles and ratings
+struct minRating {
+    constexpr bool operator()(
+        pair<string, int> const& a,
+        pair<string, int> const& b)
+        const noexcept{
+        return a.second > b.second;
+    }
+};
+vector<pair<string, float> > kSort(unordered_map <string, Content> allContents, vector <pair<string,float> > content, int k){
+    // Make a min priority queue to hold all given ints
+    priority_queue<pair<string, float>, vector<pair<string, float> >, minRating> sorter;
+    vector<pair<string, float> > endSort;
+
+    // Iterate through the given vector, filling the priority queue up to k elements
+    for(int i = 0; i < k; i++){
+        sorter.push(make_pair(content[i].first, content[i].second));
+    }
+
+    // For the remaining elements, if an int is larger than the top of the queue,
+    // pop the smallest element from the priority queue and add that int
+    for(int i = k; i < content.size(); i++){
+        if(sorter.top().second < content[i].second){
+            sorter.pop();
+            sorter.push(make_pair(content[i].first, content[i].second));
+        }
+    }
+
+    // Add priority queue elements to a vector and return it
+    for(int i = 0; i < k; i++){
+        endSort.push_back(make_pair(sorter.top().first, sorter.top().second));
+        sorter.pop();
+    }
+
+    reverse(endSort.begin(), endSort.end());
+
+    return endSort;
+}
+
 
 int main() { // user inputs and method calling
 
     string sortType, format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0, isValid = 0;
-    vector<string> genres = {};
-    vector<pair<string,float>> correctKeys = {};
+    // vector<string> genres = {};
+    vector<string> genres;
+    // vector<pair<string,float>> correctKeys = {};
+    vector<pair<string,float> > correctKeys;
+
 
     // opening file
-    unordered_map<string, Content> allContent = ReadTitleBasics("title_basics2.tsv");
-    setRatings("title_ratings.tsv", allContent);
+    unordered_map<string, Content> allContent = ReadTitleBasics("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_basics2.tsv");
+    setRatings("/Users/Cecilia1/Documents/GitHub/MediaMiddleman/title_ratings.tsv", allContent);
 
     // asking user for inputs
     cout << "The MediaMiddleMan\n--------------------------------------------------------------------\nWould You like to use Merge Sort or K-Largest Sort? (Type as Shown): ";
@@ -540,18 +585,20 @@ int main() { // user inputs and method calling
 
     // sorting
 
-    vector<pair<string,float>> sortedKeys = {};
+    // vector<pair<string,float>> sortedKeys = {};
+    vector<pair<string,float> > sortedKeys;
+
 
     if (sortType == "Merge") { // user wants merge sort
 
         sortedKeys = mergeSort(allContent, correctKeys, 0, (int)correctKeys.size());
 
     }
-    //else { // user wants k-largest sort
+    else { // user wants k-largest sort
 
-        //vector<string> sortedKeys = kSort(allContent, correctKeys, 0, correctKeys.size());
+       sortedKeys = kSort(allContent, correctKeys, 5);
 
-    //}
+    }
 
     // Outputing Results
 
