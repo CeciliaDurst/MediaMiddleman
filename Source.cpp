@@ -276,11 +276,12 @@ void setRatings(string filename, unordered_map<string, Content>& allContents) {
 // first input is unordered map containing <key, Content list of information on the movie at this key>
 // second input is a Content list of user inputs
 // returns a list of keys that match the search requests
-vector<string> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
+vector<pair<string,float>> mapFilter(unordered_map<string, Content> allContent, Content userInputs) {
 
     int temp = 0;
     Content currList;
-    vector<string> correctKeys, currGenre, currInput = userInputs.getGenres();
+    vector<pair<string,float>> correctKeys;
+    vector<string> currGenre, currInput = userInputs.getGenres();
 
     for (auto& i : allContent) { // i loops through every key of allContent
 
@@ -292,7 +293,7 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 
             if (currInput[0] == "None") { // null
 
-                correctKeys.push_back(i.first); // inserting key into the output list
+                correctKeys.push_back(make_pair(i.first,i.second.getRating())); // inserting key into the output list
 
             }
             else {
@@ -307,7 +308,7 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 
                         if (currGenre[j] == currInput[k]) { // breaking if one matches
 
-                            correctKeys.push_back(i.first); // inserting key into the output list
+                            correctKeys.push_back(make_pair(i.first,i.second.getRating())); // inserting key into the output list
                             break;
 
                         }
@@ -341,11 +342,11 @@ vector<string> mapFilter(unordered_map<string, Content> allContent, Content user
 // Sorting
 
 // Merge sort
-vector<string> mergeSort(unordered_map <string, Content> allContents, vector <string> content, int start, int end) {
+vector<pair<string,float>> mergeSort(unordered_map <string, Content> allContents, vector <pair<string,float>> content, int start, int end) {
 
     // Make and populate new vector endSort from subsection of given vector
-    vector <string> endSort;
-    for (int i = start; i < end; i++) {
+    vector <pair<string,float>> endSort;
+    for(int i = start; i < end; i++){
         endSort.push_back(content[i]);
     }
 
@@ -353,25 +354,25 @@ vector<string> mergeSort(unordered_map <string, Content> allContents, vector <st
     int midpoint = (end - start) / 2 + start;
 
     // If provided list is too small to be halved, return endSort
-    if (midpoint == 0 || endSort.size() == 1) {
+    if(midpoint == 0 || endSort.size() == 1){
         return endSort;
     }
 
     // Recursively halve list
-    vector <string> firstHalf = mergeSort(allContents, content, start, midpoint);
-    vector <string> secondHalf = mergeSort(allContents, content, midpoint, end);
+    vector <pair<string,float>> firstHalf = mergeSort(allContents, content, start, midpoint);
+    vector <pair<string,float>> secondHalf = mergeSort(allContents, content, midpoint, end);
 
     //Compare halves' contents and merge
     int index = 0;
     int firstIndex = 0;
     int secondIndex = 0;
 
-    while (firstIndex < (int)firstHalf.size() || secondIndex < (int)secondHalf.size()) {
-        if (allContents[firstHalf[firstIndex]].getRating() > allContents[secondHalf[secondIndex]].getRating() || secondIndex >= (int)secondHalf.size()) {
-            endSort[index++] = firstHalf[firstIndex++];
+    while(firstIndex < (int)firstHalf.size() || secondIndex < (int)secondHalf.size()){
+        if(firstHalf[firstIndex].second > secondHalf[secondIndex].second || secondIndex >= (int)secondHalf.size()){
+            endSort[index ++] = firstHalf[firstIndex ++];
         }
-        else {
-            endSort[index++] = secondHalf[secondIndex++];
+        else{
+            endSort[index ++] = secondHalf[secondIndex ++];
         }
     }
 
@@ -384,7 +385,7 @@ int main() { // user inputs and method calling
     string sortType, format, title, strStartYear, strEndYear, strRuntime, strGenre;
     int startYear = 0, endYear = 0, runtime = 0, isValid = 0;
     vector<string> genres = {};
-    vector<string> correctKeys = {};
+    vector<pair<string,float>> correctKeys = {};
 
     // opening file
     unordered_map<string, Content> allContent = ReadTitleBasics("title_basics2.tsv");
@@ -526,7 +527,8 @@ int main() { // user inputs and method calling
     }
 
     // sorting
-    vector<string> sortedKeys = {};
+
+    vector<pair<string,float>> sortedKeys = {};
 
     if (sortType == "Merge") { // user wants merge sort
 
@@ -548,8 +550,8 @@ int main() { // user inputs and method calling
 
         for (int i = 0; i < 5; i++) {
 
-            temp = allContent[sortedKeys[i]].getTitle();
-            cout << temp << endl;
+            temp = allContent[sortedKeys[i].first].getTitle();
+            cout << temp << " " << allContent[sortedKeys[i].first].getRating()<< endl;
 
         }
 
@@ -558,7 +560,7 @@ int main() { // user inputs and method calling
 
         for (int i = 0; i < sortedKeys.size(); i++) {
 
-            temp = allContent[sortedKeys[i]].getTitle();
+            temp = allContent[sortedKeys[i].first].getTitle();
             cout << temp << endl;
 
         }
