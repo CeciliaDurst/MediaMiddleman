@@ -155,7 +155,14 @@ void Content::outputDetails() {
         }
     }
 
-    cout << "\nRating: " << rating  << "\n"<< endl;
+    if(rating == 0.0f){
+        cout << "\nRating: None" << endl;
+    }
+
+    else{
+        cout << "\nRating: " << rating  << "\n"<< endl;
+
+    }
 }
 
 float Content::getRating() {
@@ -472,7 +479,7 @@ void userInputs(string title_basics, string title_ratings){
 
     }
 
-    cout << "\nSelect your preferences or type None" << endl;
+    cout << "\nSelect your preferences or type None if you do not care about the type of filter" << endl;
 
     while (correctKeys.empty()) { // getting search inputs
 
@@ -572,13 +579,14 @@ void userInputs(string title_basics, string title_ratings){
 
         }
 
-        cout << "Genre(s) with commas in between: ";
+        cout << "Genre (Comedy, Drama, War, Action, Adventure, Documentary, etc...[enter with commas inbetween]): ";
         cin >> strGenre;
 
         // setting user inputs in a Content List
         Content userInputs;
         userInputs = Content(format, title, startYear, endYear, runtime);
         userInputs.setGenres(strGenre);
+        
 
         // filtering keys based on search inputs
         correctKeys = mapFilter(allContent, userInputs);
@@ -632,6 +640,7 @@ void userInputs(string title_basics, string title_ratings){
         for (int i = 0; i < sortedKeys.size(); i++) {
 
             allContent[sortedKeys[i].first].outputDetails();
+            cout << "\n";
 
         }
 
@@ -639,15 +648,13 @@ void userInputs(string title_basics, string title_ratings){
 }
 
 int main() { // user inputs and method calling
-    // unordered_map<string, Content> allContent = ReadTitleBasics("title_basics.tsv");
-    // allContent["tt0062361"].outputDetails();
-    // setRatings("title_ratings.tsv", allContent);
+    
 
     string title_basics = "";
     string title_ratings = "";
     //Tarik Filenames
     title_basics = "title_basics.tsv";
-    title_ratings = "title_ratings";
+    title_ratings = "title_ratings.tsv";
 
     //Cecilia filenames
 
